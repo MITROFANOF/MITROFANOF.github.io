@@ -130,8 +130,8 @@
   .app-icon {
     width: 96px; height: 96px;
     flex-shrink: 0;
-    border-radius: 22px;
-    box-shadow: 0 10px 30px rgba(79, 209, 255, 0.18);
+    border-radius: 30%; /* Google Play masks store icons at 30% of their size */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45), 0 10px 24px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(79, 209, 255, 0.18);
   }
   .game-info { min-width: 0; }
   .game-info h2 {
@@ -189,7 +189,7 @@
     h1 { font-size: clamp(64px, 6.4vw, 104px); }
     .lead { font-size: 20px; margin-bottom: 0; }
     .game { padding: 24px; gap: 24px; }
-    .app-icon { width: 112px; height: 112px; border-radius: 26px; }
+    .app-icon { width: 112px; height: 112px; }
     .game-info h2 { font-size: 21px; }
   }
   @media (max-width: 480px) {
@@ -264,7 +264,7 @@
   <section class="apps">
   <p class="section-title">Приложения</p>
   <a class="game" href="https://play.google.com/store/apps/details?id=com.AksiCo.NumGen">
-    <img class="app-icon" src="/numgen-icon.webp" alt="Генератор номеров — Google Play">
+    <img class="app-icon" src="/numgen-icon.jpg" alt="Генератор номеров — Google Play">
     <div class="game-info">
       <h2>Генератор номеров</h2>
       <p>Приложение для Android.</p>
