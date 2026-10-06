@@ -95,6 +95,9 @@
     padding-top: 28px;
     border-top: 1px solid var(--border);
   }
+  h2[id] { scroll-margin-top: 16px; }
+  a.anchor { color: inherit; text-decoration: none; }
+  a.anchor:hover { color: var(--accent); }
   h3 {
     font-size: 16px;
     font-weight: 600;
@@ -180,7 +183,8 @@
   <h1>Что нового — Генератор номеров</h1>
   <p class="meta">Журнал изменений</p>
 
-  <h2>Версия 3.2.1 — октябрь 2026</h2>
+  <!-- Новая версия — новый раздел сверху; id раздела = номер версии, ссылка: /changelog/#3.2.1 -->
+  <h2 id="3.2.1"><a class="anchor" href="#3.2.1">Версия 3.2.1 — октябрь 2026</a></h2>
   <p>Всё, что изменилось с версии 3.1.0.</p>
   <h3>Новое</h3>
   <ul>
