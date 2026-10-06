@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What’s new — License Plate Generator — Mitrofan Games</title>
+<meta name="theme-color" content="#0b0b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --surface: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f4f4f7;
+    --body: #b9b9c6;
+    --muted: #8a8a98;
+    --accent: #4fd1ff;
+    --accent-2: #7a6bff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .back:hover { color: var(--text); }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .lang a:hover { color: var(--text); }
+  .lang a.active { background: var(--text); color: var(--bg); }
+  h1 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    margin: 48px 0 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+  }
+  p, li { color: var(--body); }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:hover { color: #8fe2ff; }
+  ul { padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 0.72em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  /* Анимированный фон: плавающие светящиеся пятна */
+  .bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+  }
+  .bg span:nth-child(1) {
+    width: max(520px, 38vw); height: max(520px, 38vw);
+    left: -140px; top: -160px;
+    background: rgba(122, 107, 255, 0.34);
+    animation: drift-1 22s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(2) {
+    width: max(460px, 34vw); height: max(460px, 34vw);
+    right: -160px; bottom: -160px;
+    background: rgba(79, 209, 255, 0.24);
+    animation: drift-2 26s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(3) {
+    width: max(340px, 24vw); height: max(340px, 24vw);
+    left: 45%; top: 40%;
+    background: rgba(214, 92, 255, 0.14);
+    animation: drift-3 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(28vw, 18vh) scale(1.15); }
+    100% { transform: translate(8vw, 42vh) scale(0.9); }
+  }
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-30vw, -22vh) scale(1.2); }
+    100% { transform: translate(-10vw, -46vh) scale(0.95); }
+  }
+  @keyframes drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(0.9); }
+    50%  { transform: translate(-20%, -110%) scale(1.25); }
+    100% { transform: translate(-90%, -10%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span></span><span></span><span></span></div>
+<main>
+  <nav class="top"><a class="back" href="/">← Mitrofan Games</a><div class="lang"><a href="/changelog/" hreflang="ru">RU</a><a class="active" aria-current="page">EN</a></div></nav>
+  <h1>What’s new — License Plate Generator</h1>
+  <p class="meta">Changelog</p>
+
+  <h2>Version 3.2.1 — October 2026</h2>
+  <p>Everything that changed since version 3.1.0.</p>
+  <h3>New</h3>
+  <ul>
+    <li><strong>Car Week, October 19–25</strong> — daily event tasks with an exclusive car as the prize.</li>
+    <li><strong>Garage</strong> — the car you win stands in a 3D garage; orbit and zoom the camera.</li>
+    <li><strong>Your plate on the car</strong> — try any plate from your collection on it and install it. The first install is free, swaps are for an ad.</li>
+    <li><strong>Car award cinematic.</strong></li>
+    <li><strong>Car serial number</strong> — “Unit No. N” in order among all winners.</li>
+    <li><strong>Google Play achievement</strong> for the event car.</li>
+    <li><strong>Graphics setting</strong> (Auto / Economy / High) for low-end phones.</li>
+    <li><strong>Military plates</strong> — 38 units and agencies, priced by the unit’s prestige.</li>
+    <li><strong>Redesigned Belarusian plates</strong> — the real typeface, green BY, the flag, the letter I and Minsk’s second code (8).</li>
+    <li><strong>60+ new special series</strong> of administrations and law-enforcement agencies, plus the ННН series (region 32).</li>
+    <li><strong>Illegal region codes</strong> — 12 never-issued codes are marked “Illegal”: a black card, a notice and a Google Play achievement.</li>
+    <li><strong>Look-alike symbols combo</strong> — B and 8, O and 0, A and 4, E and 3, T and 7, I and 1, in a row or scattered.</li>
+    <li><strong>Mirrored digits with the region</strong> — a plate like 767·67 now counts.</li>
+    <li><strong>Google Play cloud save</strong>, with a choice of version when the phone and the cloud differ.</li>
+    <li><strong>Collection up to 10,000 slots.</strong></li>
+    <li><strong>Save protection against hand edits</strong> — edited saves stay off the leaderboard.</li>
+    <li><strong>Skip the animation</strong> of Epic and Legendary plates (in settings).</li>
+    <li><strong>Frame rate setting</strong> — 30 to 144, 60 by default.</li>
+    <li><strong>Google Play achievements and leaderboard tiles</strong> in the menu.</li>
+    <li><strong>Telegram news tile.</strong></li>
+  </ul>
+  <h3>Fixes</h3>
+  <ul>
+    <li>Fast taps are no longer missed: the 10-spins-a-second cap is gone (now 25 a second with headroom).</li>
+    <li>Auto-sell no longer stutters on large collections.</li>
+    <li>Less stutter on rapid spins: the game writes its save less often.</li>
+    <li>Smoother on Android: the game used to run at 30 frames per second.</li>
+    <li>Google Play achievements and leaderboard scores are now actually sent.</li>
+    <li>A failing Google Play Games sign-in no longer gets in the way of launching.</li>
+    <li>Police and taxi plates no longer roll with a foreign region.</li>
+    <li>The “Unlocked” notice names the rarity in the player’s language.</li>
+    <li>Landscape: taps on the side margins spin, and the badge no longer opens the card by accident.</li>
+    <li>The interface stays clear of the camera cutout and the gesture bar.</li>
+    <li>The rarity catalog names Belarus’s regions instead of printing codes.</li>
+    <li>Updated Yandex ad library.</li>
+    <li>Smaller download: menu pictures are compressed.</li>
+    <li>Rarity thresholds and prices recalibrated for the new combos.</li>
+  </ul>
+
+  <footer>© Mitrofan Games</footer>
+</main>
+</body>
+</html>

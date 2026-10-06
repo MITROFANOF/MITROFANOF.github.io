@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Что нового — Генератор номеров — Mitrofan Games</title>
+<meta name="theme-color" content="#0b0b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --surface: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f4f4f7;
+    --body: #b9b9c6;
+    --muted: #8a8a98;
+    --accent: #4fd1ff;
+    --accent-2: #7a6bff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .back:hover { color: var(--text); }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .lang a:hover { color: var(--text); }
+  .lang a.active { background: var(--text); color: var(--bg); }
+  h1 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    margin: 48px 0 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+  }
+  p, li { color: var(--body); }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:hover { color: #8fe2ff; }
+  ul { padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 0.72em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  /* Анимированный фон: плавающие светящиеся пятна */
+  .bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+  }
+  .bg span:nth-child(1) {
+    width: max(520px, 38vw); height: max(520px, 38vw);
+    left: -140px; top: -160px;
+    background: rgba(122, 107, 255, 0.34);
+    animation: drift-1 22s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(2) {
+    width: max(460px, 34vw); height: max(460px, 34vw);
+    right: -160px; bottom: -160px;
+    background: rgba(79, 209, 255, 0.24);
+    animation: drift-2 26s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(3) {
+    width: max(340px, 24vw); height: max(340px, 24vw);
+    left: 45%; top: 40%;
+    background: rgba(214, 92, 255, 0.14);
+    animation: drift-3 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(28vw, 18vh) scale(1.15); }
+    100% { transform: translate(8vw, 42vh) scale(0.9); }
+  }
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-30vw, -22vh) scale(1.2); }
+    100% { transform: translate(-10vw, -46vh) scale(0.95); }
+  }
+  @keyframes drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(0.9); }
+    50%  { transform: translate(-20%, -110%) scale(1.25); }
+    100% { transform: translate(-90%, -10%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span></span><span></span><span></span></div>
+<main>
+  <nav class="top"><a class="back" href="/">← Mitrofan Games</a><div class="lang"><a class="active" aria-current="page">RU</a><a href="/changelog/en/" hreflang="en">EN</a></div></nav>
+  <h1>Что нового — Генератор номеров</h1>
+  <p class="meta">Журнал изменений</p>
+
+  <h2>Версия 3.2.1 — октябрь 2026</h2>
+  <p>Всё, что изменилось с версии 3.1.0.</p>
+  <h3>Новое</h3>
+  <ul>
+    <li><strong>«Неделя автомобилиста» 19–25 октября</strong> — ежедневные задания события, в награду эксклюзивная машина.</li>
+    <li><strong>Гараж</strong> — выигранная машина стоит в 3D-гараже, камеру можно крутить и приближать.</li>
+    <li><strong>Свой номер на машину</strong> — любой номер из коллекции можно примерить и поставить. Первая установка бесплатно, замена — за рекламу.</li>
+    <li><strong>Ролик вручения машины.</strong></li>
+    <li><strong>Серийный номер машины</strong> — «Экземпляр №N» по порядку среди всех победителей.</li>
+    <li><strong>Достижение Google Play</strong> за машину из события.</li>
+    <li><strong>Режим «Графика»</strong> (Авто / Экономный / Высокий) для слабых телефонов.</li>
+    <li><strong>Военные номера</strong> — 38 частей и ведомств, цена зависит от престижа части.</li>
+    <li><strong>Белорусские номера в новом виде</strong> — настоящий шрифт, зелёная надпись BY, флаг, буква I и второй код Минска (8).</li>
+    <li><strong>+60 спецсерий</strong> администраций и силовых ведомств, а также серия ННН (регион 32).</li>
+    <li><strong>Нелегальные коды регионов</strong> — 12 никогда не выдававшихся кодов помечены «Нелегальный»: чёрная карточка, уведомление и достижение Google Play.</li>
+    <li><strong>Комбинация «похожие символы»</strong> — В и 8, О и 0, А и 4, Е и 3, Т и 7, I и 1, подряд или вразброс.</li>
+    <li><strong>Зеркальные цифры с регионом</strong> — номер вроде 767·67 засчитывается.</li>
+    <li><strong>Облачное сохранение Google Play</strong> с выбором версии, если на телефоне и в облаке разный прогресс.</li>
+    <li><strong>Коллекция до 10 000 мест.</strong></li>
+    <li><strong>Защита сохранения от ручной правки</strong> — такие игроки не попадают в рейтинг.</li>
+    <li><strong>Пропуск анимации</strong> Эпических и Легендарных номеров (в настройках).</li>
+    <li><strong>Настройка частоты кадров</strong> — от 30 до 144, по умолчанию 60.</li>
+    <li><strong>Плитки «Достижения» и «Рейтинг»</strong> Google Play в меню.</li>
+    <li><strong>Плитка новостей в Telegram.</strong></li>
+  </ul>
+  <h3>Исправления</h3>
+  <ul>
+    <li>Быстрые тапы больше не теряются: снято ограничение 10 прокрутов в секунду (теперь 25 в секунду с запасом).</li>
+    <li>Автопродажа не подтормаживает на больших коллекциях.</li>
+    <li>Меньше подтормаживаний при частых прокрутах: сохранение реже пишется на диск.</li>
+    <li>Плавнее на Android: раньше игра работала в 30 кадрах в секунду.</li>
+    <li>Достижения и рейтинг Google Play теперь действительно отправляются.</li>
+    <li>Сбой входа в Google Play Игры больше не мешает запуску игры.</li>
+    <li>Полицейские номера и такси больше не выпадают с чужим регионом.</li>
+    <li>Уведомление «Открыто новое» называет редкость по-русски.</li>
+    <li>Горизонтальный экран: нажатия по полям сбоку крутят номер, бейдж не открывает карточку случайно.</li>
+    <li>Интерфейс не залезает под вырез камеры и полоску жестов.</li>
+    <li>В каталоге редкостей — названия регионов Беларуси вместо кодов.</li>
+    <li>Обновлена рекламная библиотека Яндекса.</li>
+    <li>Игра стала легче: картинки меню сжаты.</li>
+    <li>Пороги редкости и цены пересчитаны под новые комбинации.</li>
+  </ul>
+
+  <footer>© Mitrofan Games</footer>
+</main>
+</body>
+</html>
