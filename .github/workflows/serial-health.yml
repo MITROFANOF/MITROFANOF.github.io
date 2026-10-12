@@ -1,0 +1,27 @@
+# Is the car serial server up? (NumberGenerator tools/car-serial-server/README.md, section "reserve")
+# Every 10 minutes GitHub asks serial.mitrofanof.ru/health and the closed real event; a failed run emails the owner
+# (GitHub notifies about failed scheduled runs). Here, not in the game's private repo: a public repo's Actions are free.
+# GitHub turns a schedule off after 60 days without a commit in the repo — the Actions tab offers to turn it back on.
+name: serial-health
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions: {}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: health
+        run: |
+          curl -fsS --retry 3 --retry-all-errors --retry-delay 10 --max-time 20 https://serial.mitrofanof.ru/health \
+            | grep -q '"ok":true'
+      - name: claims answer (the app behind Caddy, not only Caddy)
+        run: |
+          # Before CLAIM_FROM a claim is 403 closed, inside the window a made-up code is 401: either proves the app and
+          # its settings answer. 5xx or no answer fails the run.
+          code=$(curl -sS --retry 3 --retry-all-errors --retry-delay 10 --max-time 40 -o /dev/null -w '%{http_code}' \
+            -X POST https://serial.mitrofanof.ru/ -d '{"eventId":"car-2026-10","authCode":"health-check"}')
+          echo "claim answered $code"
+          [ "$code" = 403 ] || [ "$code" = 401 ] || [ "$code" = 429 ]
