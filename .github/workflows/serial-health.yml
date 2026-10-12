@@ -25,3 +25,12 @@ jobs:
             -X POST https://serial.mitrofanof.ru/ -d '{"eventId":"car-2026-10","authCode":"health-check"}')
           echo "claim answered $code"
           [ "$code" = 403 ] || [ "$code" = 401 ] || [ "$code" = 429 ]
+      - name: integrity (the tamper pardon and the gifts, /integrity on the same machine)
+        run: |
+          curl -fsS --retry 3 --retry-all-errors --retry-delay 10 --max-time 20 https://serial.mitrofanof.ru/integrity/health \
+            | grep -q '"ok":true'
+          # A made-up code is 401 once the service has its secrets and reaches Google; 5xx or no answer fails the run.
+          code=$(curl -sS --retry 3 --retry-all-errors --retry-delay 10 --max-time 40 -o /dev/null -w '%{http_code}' \
+            -X POST "https://serial.mitrofanof.ru/integrity?op=gifts" -d '{"authCode":"health-check","nonce":"0000000000000000"}')
+          echo "gifts answered $code"
+          [ "$code" = 401 ] || [ "$code" = 429 ]
