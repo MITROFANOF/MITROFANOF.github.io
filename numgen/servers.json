@@ -1,4 +1,6 @@
 {
   "serial": "reserve",
+  "cloud": "gpgs",
+  "cloudShare": 0,
   "latestVersion": { "rustore": 46, "appgallery": 0, "galaxy": 0, "getapps": 0 }
 }
