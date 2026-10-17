@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пользовательское соглашение — Генератор номеров</title>
+<meta name="theme-color" content="#0b0b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --surface: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f4f4f7;
+    --body: #b9b9c6;
+    --muted: #8a8a98;
+    --accent: #4fd1ff;
+    --accent-2: #7a6bff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .back:hover { color: var(--text); }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .lang a:hover { color: var(--text); }
+  .lang a.active { background: var(--text); color: var(--bg); }
+  h1 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    margin: 48px 0 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+  }
+  p, li { color: var(--body); }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:hover { color: #8fe2ff; }
+  ul { padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 0.72em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  /* Анимированный фон: плавающие светящиеся пятна */
+  .bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+  }
+  .bg span:nth-child(1) {
+    width: max(520px, 38vw); height: max(520px, 38vw);
+    left: -140px; top: -160px;
+    background: rgba(122, 107, 255, 0.34);
+    animation: drift-1 22s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(2) {
+    width: max(460px, 34vw); height: max(460px, 34vw);
+    right: -160px; bottom: -160px;
+    background: rgba(79, 209, 255, 0.24);
+    animation: drift-2 26s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(3) {
+    width: max(340px, 24vw); height: max(340px, 24vw);
+    left: 45%; top: 40%;
+    background: rgba(214, 92, 255, 0.14);
+    animation: drift-3 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(28vw, 18vh) scale(1.15); }
+    100% { transform: translate(8vw, 42vh) scale(0.9); }
+  }
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-30vw, -22vh) scale(1.2); }
+    100% { transform: translate(-10vw, -46vh) scale(0.95); }
+  }
+  @keyframes drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(0.9); }
+    50%  { transform: translate(-20%, -110%) scale(1.25); }
+    100% { transform: translate(-90%, -10%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span></span><span></span><span></span></div>
+<main>
+  <nav class="top"><a class="back" href="/">← Mitrofan Games</a><div class="lang"><a class="active" aria-current="page">RU</a><a href="/terms/en/" hreflang="en">EN</a></div></nav>
+  <h1>Пользовательское соглашение — Генератор номеров</h1>
+  <p class="meta">Редакция от 17.10.2026</p>
+
+  <p>Это соглашение — условия, на которых Митрофанов Иван Сергеевич, разработчик игры «Генератор номеров» (г. Санкт-Петербург, <a href="mailto:mr.aksi.lc@gmail.com">mr.aksi.lc@gmail.com</a>; далее — «Разработчик»), разрешает вам пользоваться игрой: приложением для Android и веб-версией на <a href="https://play.mitrofanof.ru/">play.mitrofanof.ru</a> (далее — «Игра»). Соглашение — публичная оферта (ст. 437 Гражданского кодекса РФ). Начиная пользоваться Игрой, вы принимаете его условия (ст. 438 ГК РФ). Если вы с ними не согласны, не пользуйтесь Игрой.</p>
+  <p>Обработка персональных данных описана отдельно — в <a href="/privacy/">политике конфиденциальности</a>; согласие на обработку адреса почты даётся отдельно, в форме входа по почте (<a href="/consent/">текст согласия</a>). Это соглашение согласием на обработку персональных данных не является.</p>
+
+  <h2>1. Что вы получаете</h2>
+  <ul>
+    <li>Разработчик предоставляет вам безвозмездно простую (неисключительную) лицензию на использование Игры для личных некоммерческих целей: установку, запуск и игру на ваших устройствах, на весь срок действия исключительного права, на территории всего мира.</li>
+    <li>Игра бесплатна. В ней показывается реклама, в том числе видеореклама, которую вы смотрите по своему выбору за игровое вознаграждение.</li>
+    <li>Все права на Игру, её код, графику, звуки, тексты и названия принадлежат Разработчику или используются им законно. Копировать, изменять, декомпилировать Игру, распространять её изменённые версии и использовать её части отдельно нельзя, кроме случаев, прямо разрешённых законом.</li>
+  </ul>
+
+  <h2>2. Игровые ценности</h2>
+  <ul>
+    <li>Игровые деньги (₽), валюта ($), номера, машины, серийные номера машин, награды заданий и событий, подарки и промокоды — <strong>игровые ценности</strong>. Это часть игрового процесса, а не имущество: они не имеют денежной стоимости, не обмениваются на реальные деньги, товары или услуги и не передаются другим людям вне механик самой Игры. Слова «₽», «цена», «продать» в Игре обозначают игровые величины.</li>
+    <li>Машины, которые можно выиграть в игровых событиях, — <strong>виртуальные</strong>: это модели в Игре. Реальные автомобили и иные реальные призы в Игре не разыгрываются.</li>
+    <li>Разработчик может менять правила, цены и вероятности в Игре, добавлять и убирать функции. Если обновление заметно удешевляет номера, которые у вас уже есть, Игра может предложить продать их по прежней цене; это не гарантия.</li>
+    <li>Подарки и промокоды выдаются по усмотрению Разработчика, в том числе в ответ на обращения в поддержку. Промокод действует в пределах указанного срока и числа активаций.</li>
+  </ul>
+
+  <h2>3. Аккаунт и сохранения</h2>
+  <ul>
+    <li>Играть можно без аккаунта: прогресс хранится на вашем устройстве или в браузере. По желанию можно войти по почте, а в приложении — через Google Play Игры, чтобы хранить копию прогресса на сервере.</li>
+    <li>Вы отвечаете за доступ к своей почте и устройству. Не передавайте другим коды входа из писем.</li>
+    <li>Разработчик хранит резервные копии прогресса, но не гарантирует, что прогресс можно будет восстановить в любом случае: при сбое устройства, очистке данных браузера, удалении Игры без входа в аккаунт он может быть потерян.</li>
+    <li>Удалить аккаунт и данные можно в любой момент — см. <a href="/delete-data/">«Удаление данных»</a>.</li>
+  </ul>
+
+  <h2>4. Честная игра</h2>
+  <p>Запрещается:</p>
+  <ul>
+    <li>изменять файлы сохранений, память Игры или её код, в том числе программами вроде GameGuardian, а также ускорять время в Игре;</li>
+    <li>использовать сторонние программы, которые играют за вас, и эксплуатировать ошибки Игры для получения игровых ценностей;</li>
+    <li>подбирать коды входа и промокоды, создавать нагрузку на серверы Игры, пытаться получить доступ к чужим аккаунтам и данным;</li>
+    <li>продавать, покупать или передавать игровые ценности и аккаунты за реальные деньги.</li>
+  </ul>
+  <p>Если Игра обнаружит нарушение, она отмечает профиль: для него становятся недоступны таблица рекордов и серийный номер машины. Разработчик может также скрыть результат в таблице рекордов, отменить полученные с нарушением ценности или закрыть доступ к аккаунту. Отметка может оказаться ошибочной — напишите в поддержку, и Разработчик её проверит; ошибочные отметки снимаются.</p>
+
+  <h2>5. Ответственность</h2>
+  <ul>
+    <li>Игра предоставляется «как есть». Разработчик старается, чтобы она работала без ошибок и перерывов, но не гарантирует этого: возможны технические работы, сбои у поставщиков (хостинга, Google, Яндекса) и прекращение поддержки отдельных устройств.</li>
+    <li>Поскольку Игра бесплатна, Разработчик не отвечает за потерю игровых ценностей и прогресса, упущенную выгоду и косвенные убытки — кроме случаев, когда ответственность нельзя ограничить по закону (в том числе при умысле Разработчика).</li>
+    <li>За содержание рекламы отвечают рекламодатели и рекламные сети. Переходя по рекламе, вы покидаете Игру.</li>
+  </ul>
+
+  <h2>6. Возраст</h2>
+  <p>Игра не предназначена для детей младше 13 лет. Если вам меньше 18 лет, пользуйтесь Игрой с согласия родителей или законных представителей.</p>
+
+  <h2>7. Изменение и прекращение</h2>
+  <ul>
+    <li>Разработчик может изменять это соглашение. Новая редакция публикуется на этой странице с датой и действует с момента публикации; продолжая пользоваться Игрой, вы принимаете её. О существенных изменениях Разработчик старается сообщать заранее — в Игре или в <a href="https://t.me/num_gen">Telegram-канале</a>.</li>
+    <li>Вы можете в любой момент перестать пользоваться Игрой и удалить её и свои данные. Разработчик может прекратить работу Игры или её онлайн-функций.</li>
+  </ul>
+
+  <h2>8. Споры и контакты</h2>
+  <ul>
+    <li>К соглашению применяется право Российской Федерации.</li>
+    <li>Сначала напишите Разработчику на <a href="mailto:mr.aksi.lc@gmail.com">mr.aksi.lc@gmail.com</a>: он отвечает на претензию в течение 30 дней. Если спор не решён, он рассматривается в суде по правилам законодательства РФ, в том числе о защите прав потребителей.</li>
+    <li>Если какое-то условие окажется недействительным, остальные продолжают действовать.</li>
+  </ul>
+
+  <p>Связанные документы: <a href="/privacy/">политика конфиденциальности</a>, <a href="/consent/">согласие на обработку персональных данных</a>, <a href="/delete-data/">удаление данных</a>.</p>
+
+  <footer>© Mitrofan Games</footer>
+</main>
+</body>
+</html>

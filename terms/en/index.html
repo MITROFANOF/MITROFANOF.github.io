@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Use — Number Generator</title>
+<meta name="theme-color" content="#0b0b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --surface: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f4f4f7;
+    --body: #b9b9c6;
+    --muted: #8a8a98;
+    --accent: #4fd1ff;
+    --accent-2: #7a6bff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .back:hover { color: var(--text); }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .lang a:hover { color: var(--text); }
+  .lang a.active { background: var(--text); color: var(--bg); }
+  h1 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    margin: 48px 0 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+  }
+  p, li { color: var(--body); }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:hover { color: #8fe2ff; }
+  ul { padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 0.72em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  /* Анимированный фон: плавающие светящиеся пятна */
+  .bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+  }
+  .bg span:nth-child(1) {
+    width: max(520px, 38vw); height: max(520px, 38vw);
+    left: -140px; top: -160px;
+    background: rgba(122, 107, 255, 0.34);
+    animation: drift-1 22s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(2) {
+    width: max(460px, 34vw); height: max(460px, 34vw);
+    right: -160px; bottom: -160px;
+    background: rgba(79, 209, 255, 0.24);
+    animation: drift-2 26s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(3) {
+    width: max(340px, 24vw); height: max(340px, 24vw);
+    left: 45%; top: 40%;
+    background: rgba(214, 92, 255, 0.14);
+    animation: drift-3 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(28vw, 18vh) scale(1.15); }
+    100% { transform: translate(8vw, 42vh) scale(0.9); }
+  }
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-30vw, -22vh) scale(1.2); }
+    100% { transform: translate(-10vw, -46vh) scale(0.95); }
+  }
+  @keyframes drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(0.9); }
+    50%  { transform: translate(-20%, -110%) scale(1.25); }
+    100% { transform: translate(-90%, -10%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span></span><span></span><span></span></div>
+<main>
+  <nav class="top"><a class="back" href="/">← Mitrofan Games</a><div class="lang"><a class="active" aria-current="page">EN</a><a href="/terms/" hreflang="ru">RU</a></div></nav>
+  <h1>Terms of Use — Number Generator</h1>
+  <p class="meta">Version of 17.10.2026</p>
+
+  <p>These terms are the conditions on which Ivan Sergeevich Mitrofanov, the developer of the game Number Generator (Saint Petersburg, Russia, <a href="mailto:mr.aksi.lc@gmail.com">mr.aksi.lc@gmail.com</a>; the “Developer”), lets you use the game: the Android app and the web version at <a href="https://play.mitrofanof.ru/">play.mitrofanof.ru</a> (the “Game”). These terms are a public offer under Article 437 of the Civil Code of the Russian Federation. By starting to use the Game you accept them (Article 438). If you do not agree, do not use the Game. The Russian version of these terms prevails.</p>
+  <p>The processing of personal data is described separately in the <a href="/privacy/en/">privacy policy</a>; consent to the processing of your email address is given separately, in the email sign-in form (<a href="/consent/en/">consent text</a>). These terms are not a consent to the processing of personal data.</p>
+
+  <h2>1. What you get</h2>
+  <ul>
+    <li>The Developer grants you, free of charge, a simple (non-exclusive) licence to use the Game for personal, non-commercial purposes — to install, run and play it on your devices — worldwide, for the whole term of the exclusive right.</li>
+    <li>The Game is free. It shows ads, including video ads you choose to watch for an in-game reward.</li>
+    <li>All rights to the Game, its code, graphics, sounds, texts and names belong to the Developer or are used by him lawfully. You may not copy, modify or decompile the Game, distribute modified versions or use its parts separately, except where the law expressly allows it.</li>
+  </ul>
+
+  <h2>2. In-game items</h2>
+  <ul>
+    <li>In-game money (₽), currency ($), plates, cars, car serial numbers, task and event rewards, gifts and promo codes are <strong>in-game items</strong>. They are part of the gameplay, not property: they have no monetary value, cannot be exchanged for real money, goods or services, and cannot be transferred to other people outside the Game's own mechanics. Words like “₽”, “price” and “sell” in the Game refer to in-game values.</li>
+    <li>Cars that can be won in in-game events are <strong>virtual</strong> — models inside the Game. No real cars or other real prizes are given away in the Game.</li>
+    <li>The Developer may change the rules, prices and odds in the Game and add or remove features. When an update makes plates you already own noticeably cheaper, the Game may offer to sell them at the old price; this is not a guarantee.</li>
+    <li>Gifts and promo codes are given at the Developer's discretion, including in reply to support requests. A promo code works within its stated period and number of uses.</li>
+  </ul>
+
+  <h2>3. Account and saves</h2>
+  <ul>
+    <li>You can play without an account: progress is kept on your device or in your browser. If you wish, you can sign in by email — or, in the app, with Google Play Games — to keep a copy of your progress on the server.</li>
+    <li>You are responsible for access to your email and device. Do not share the sign-in codes from our emails.</li>
+    <li>The Developer keeps backups of progress but does not guarantee that progress can always be restored: it may be lost if a device fails, browser data is cleared, or the Game is removed without signing in.</li>
+    <li>You can delete your account and data at any time — see <a href="/delete-data/en/">Data Deletion</a>.</li>
+  </ul>
+
+  <h2>4. Fair play</h2>
+  <p>You may not:</p>
+  <ul>
+    <li>modify save files, the Game's memory or code, including with tools such as GameGuardian, or speed up time in the Game;</li>
+    <li>use third-party programs that play for you, or exploit bugs to obtain in-game items;</li>
+    <li>guess sign-in codes or promo codes, overload the Game's servers, or try to access other people's accounts and data;</li>
+    <li>sell, buy or transfer in-game items or accounts for real money.</li>
+  </ul>
+  <p>When the Game detects a violation, it marks the profile: the leaderboard and the car serial number become unavailable to it. The Developer may also hide the score from the leaderboard, revoke items obtained in violation, or close access to the account. A mark may be mistaken — write to support and the Developer will check it; mistaken marks are lifted.</p>
+
+  <h2>5. Liability</h2>
+  <ul>
+    <li>The Game is provided “as is”. The Developer tries to keep it working without errors and interruptions but does not guarantee this: maintenance, outages at providers (hosting, Google, Yandex) and dropping support for some devices are possible.</li>
+    <li>As the Game is free, the Developer is not liable for lost in-game items or progress, lost profits or indirect losses — except where liability cannot be limited by law (including intent on the Developer's part).</li>
+    <li>Advertisers and ad networks are responsible for the content of ads. Following an ad takes you out of the Game.</li>
+  </ul>
+
+  <h2>6. Age</h2>
+  <p>The Game is not intended for children under 13. If you are under 18, use the Game with the consent of your parents or legal guardians.</p>
+
+  <h2>7. Changes and termination</h2>
+  <ul>
+    <li>The Developer may change these terms. A new version is published on this page with its date and applies from publication; by continuing to use the Game you accept it. The Developer tries to announce significant changes in advance — in the Game or in the <a href="https://t.me/num_gen">Telegram channel</a>.</li>
+    <li>You may stop using the Game and delete it and your data at any time. The Developer may discontinue the Game or its online features.</li>
+  </ul>
+
+  <h2>8. Disputes and contacts</h2>
+  <ul>
+    <li>These terms are governed by the law of the Russian Federation.</li>
+    <li>First write to the Developer at <a href="mailto:mr.aksi.lc@gmail.com">mr.aksi.lc@gmail.com</a>: he answers a claim within 30 days. If the dispute is not resolved, it is heard in court under Russian law, including consumer protection law.</li>
+    <li>If any provision proves invalid, the rest remain in force.</li>
+  </ul>
+
+  <p>Related documents: <a href="/privacy/en/">privacy policy</a>, <a href="/consent/en/">consent to the processing of personal data</a>, <a href="/delete-data/en/">data deletion</a>.</p>
+
+  <footer>© Mitrofan Games</footer>
+</main>
+</body>
+</html>
