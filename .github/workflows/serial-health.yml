@@ -34,3 +34,8 @@ jobs:
             -X POST "https://serial.mitrofanof.ru/integrity?op=gifts" -d '{"authCode":"health-check","nonce":"0000000000000000"}')
           echo "gifts answered $code"
           [ "$code" = 401 ] || [ "$code" = 429 ]
+      - name: the save history's disk (under 80 %; past it new accounts get no copies)
+        run: |
+          # NumberGenerator tools/car-serial-server/README.md, "web-account on the reserve". A missing number fails too.
+          curl -fsS --retry 3 --retry-all-errors --retry-delay 10 --max-time 20 https://serial.mitrofanof.ru/account/health \
+            | jq -e '(.disk | type) == "number" and .disk < 0.8'
