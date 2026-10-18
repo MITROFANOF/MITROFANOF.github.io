@@ -45,6 +45,8 @@ jobs:
           wasm=$(grep -oE '[A-Za-z0-9._-]+\.wasm\.br' index.html | head -1)
           [ -n "$wasm" ] || { echo "index.html names no .wasm.br"; exit 1; }
           # Without Content-Encoding: br the browser hands Unity compressed bytes and the page stays blank.
-          curl -fsS --retry 3 --retry-all-errors --retry-delay 10 --max-time 20 -o /dev/null -D headers.txt \
+          # HEAD, not the 9 MB: over the VPS's saturated uplink (~370 Mbit/s cap) the whole file took over 20 s and failed
+          # the run on 18.10 while the page worked — and a timeout after part of the body went to /dev/null never retried.
+          curl -fsS -I --retry 3 --retry-all-errors --retry-delay 10 --max-time 20 -o headers.txt \
             "https://play.mitrofanof.ru/Build/$wasm"
           grep -qi '^content-encoding: br' headers.txt
