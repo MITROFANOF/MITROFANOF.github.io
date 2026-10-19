@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Авторы и лицензии — Mitrofan Games</title>
+<meta name="theme-color" content="#0b0b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --surface: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f4f4f7;
+    --body: #b9b9c6;
+    --muted: #8a8a98;
+    --accent: #4fd1ff;
+    --accent-2: #7a6bff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .back:hover { color: var(--text); }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .lang a:hover { color: var(--text); }
+  .lang a.active { background: var(--text); color: var(--bg); }
+  h1 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 6vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-family: Unbounded, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    margin: 48px 0 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+  }
+  p, li { color: var(--body); }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:hover { color: #8fe2ff; }
+  ul { padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 0.72em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  /* Анимированный фон: плавающие светящиеся пятна */
+  .bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+  }
+  .bg span:nth-child(1) {
+    width: max(520px, 38vw); height: max(520px, 38vw);
+    left: -140px; top: -160px;
+    background: rgba(122, 107, 255, 0.34);
+    animation: drift-1 22s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(2) {
+    width: max(460px, 34vw); height: max(460px, 34vw);
+    right: -160px; bottom: -160px;
+    background: rgba(79, 209, 255, 0.24);
+    animation: drift-2 26s ease-in-out infinite alternate;
+  }
+  .bg span:nth-child(3) {
+    width: max(340px, 24vw); height: max(340px, 24vw);
+    left: 45%; top: 40%;
+    background: rgba(214, 92, 255, 0.14);
+    animation: drift-3 30s ease-in-out infinite alternate;
+  }
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(28vw, 18vh) scale(1.15); }
+    100% { transform: translate(8vw, 42vh) scale(0.9); }
+  }
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-30vw, -22vh) scale(1.2); }
+    100% { transform: translate(-10vw, -46vh) scale(0.95); }
+  }
+  @keyframes drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(0.9); }
+    50%  { transform: translate(-20%, -110%) scale(1.25); }
+    100% { transform: translate(-90%, -10%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span></span><span></span><span></span></div>
+<main>
+  <nav class="top"><a class="back" href="/">← Mitrofan Games</a><div class="lang"><a class="active" aria-current="page">RU</a><a href="/credits/en/" hreflang="en">EN</a></div></nav>
+  <h1>Авторы и лицензии — Генератор номеров</h1>
+  <p class="meta">Разработчик: Mitrofan Games</p>
+
+  <p>В игре есть работы других авторов, которые они выложили под свободными лицензиями. Здесь мы их называем: так требуют их лицензии, и мы им благодарны.</p>
+
+  <h2>3D-модель автомобиля</h2>
+  <p>Автомобиль в гараже сделан на основе 3D-модели другого автора.</p>
+  <ul>
+    <li><strong>Автор:</strong> <a href="https://sketchfab.com/890244234">fvrenbld</a> (Sketchfab)</li>
+    <li><strong>Оригинал:</strong> <a href="https://sketchfab.com/3d-models/8f74fb3420e24213aaeea33dc99450a3">страница модели на Sketchfab</a></li>
+    <li><strong>Лицензия:</strong> <a href="https://creativecommons.org/licenses/by/4.0/deed.ru">Creative Commons «Атрибуция» 4.0 Международная (CC BY 4.0)</a></li>
+    <li><strong>Что мы изменили:</strong> упростили модель для телефонов, заново запекли текстуры, убрали эмблемы и надписи, дали машине своё название.</li>
+  </ul>
+  <p>Автор оригинала не связан с игрой и не одобрял ни её, ни наши изменения.</p>
+
+  <footer>© Mitrofan Games</footer>
+</main>
+</body>
+</html>
