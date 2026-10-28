@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Вход через Google для аккаунта Google Play Игр (спека 2026-10-27-account-deletion-verification, «Сайт: вход через Google»). -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root {
     --bg: #0b0b10;
@@ -232,8 +234,36 @@
 
   <h2>Как удалить аккаунт</h2>
   <p class="note"><strong>Если игра у вас есть, удалите аккаунт в ней:</strong> Настройки → «Документы» → «Удаление аккаунта и данных». Если в вашей версии игры эта кнопка открывает эту страницу, обновите игру. Если вы хотите просто начать игру заново, в настройках игры есть «Сбросить прогресс» — он ничего не удаляет на сервере.</p>
-  <p>Без игры здесь можно удалить аккаунт, в который вы входите по почте: мы пришлём код на этот адрес — так мы поймём, что аккаунт ваш.</p>
+  <p>Без игры аккаунт можно удалить здесь: войдите тем же способом, что и в игре, — так мы поймём, что аккаунт ваш.</p>
 
+  <h3>Аккаунт Google Play Игр</h3>
+  <p>Войдите через Google тем аккаунтом, с которым играете. Google сообщит нам только идентификатор вашего профиля Google Play Игр в этой игре.</p>
+  <section id="delete-google" class="flow">
+    <div class="step" id="g-start">
+      <div class="actions"><button class="btn" type="button" data-act="g-signin">Войти через Google</button></div>
+    </div>
+
+    <div class="step" id="g-wait" hidden><p>Загрузка…</p></div>
+
+    <div class="step" id="g-ask" hidden>
+      <p>Вы вошли через Google Play Игры.</p>
+      <p>Через <strong>7 дней</strong> после запроса удалятся аккаунт игры, копия прогресса на нашем сервере и её версии, коллекция, подарки и промокоды, данные проверки изменений прогресса, а машина и её номер экземпляра перестанут быть связаны с вами. До этого срока удаление можно отменить здесь же или в игре. После него вернуть удалённое нельзя.</p>
+      <div class="actions"><button class="btn danger" type="button" data-act="g-delete">Удалить через 7 дней</button></div>
+    </div>
+
+    <div class="step" id="g-due" hidden>
+      <p>Вы вошли через Google Play Игры.</p>
+      <p class="due"></p>
+      <p>До этого срока удаление можно отменить. После него вернуть удалённое нельзя.</p>
+      <div class="actions"><button class="btn ghost" type="button" data-act="g-cancel">Отменить удаление</button></div>
+    </div>
+
+    <p class="msg" role="alert" hidden></p>
+    <noscript><p>Для удаления на этой странице нужен JavaScript. Без него удалите аккаунт в игре: Настройки → «Документы» → «Удаление аккаунта и данных».</p></noscript>
+  </section>
+
+  <h3>Аккаунт по почте</h3>
+  <p>Мы пришлём код на адрес, которым вы входите в игру.</p>
   <section id="delete" class="flow">
     <form class="step" id="step-email" novalidate>
       <label class="field">
@@ -272,9 +302,6 @@
     <noscript><p>Для удаления на этой странице нужен JavaScript. Без него удалите аккаунт в игре: Настройки → «Документы» → «Удаление аккаунта и данных».</p></noscript>
   </section>
 
-  <h3>Если вы входите через Google Play Игры</h3>
-  <p>Установите игру, войдите в Google Play Игры и нажмите Настройки → «Документы» → «Удаление аккаунта и данных». Без игры подтвердить, что аккаунт ваш, нельзя.</p>
-
   <h2>Что будет удалено</h2>
   <p><strong>Аккаунт игры</strong> — адрес почты, ключи входа, копия прогресса на сервере и её версии, прогресс, отложенный при объединении аккаунтов, подарки, промокоды и сведения о ключе телефона — удаляется полностью через 7 дней после запроса. После удаления хранится только хэш идентификатора входа (адреса почты или профиля Google Play Игр) — 90 дней, чтобы игра на ваших устройствах начала заново и не вернула удалённый прогресс на сервер; затем удаляется и он.</p>
   <p>Запись о серийном номере автомобиля на нашем сервере содержит <strong>идентификатор игрового профиля, игровое событие, номер экземпляра и время его получения</strong>. Мы <strong>удаляем идентификатор профиля</strong> — после этого запись больше нельзя связать с вами. <strong>Сохраняется</strong> обезличенная строка «событие — номер — время»: она нужна, чтобы этот номер не получил другой игрок. Без запроса запись хранится, пока существует номер экземпляра.</p>
@@ -301,7 +328,7 @@ var T = {
   codeFormat: 'Код похож на номер машины: буква, три цифры и две буквы, например А777АА.',
   codeWrong: 'Неверный код, осталось попыток: {n}',
   codeGone: 'Код устарел, запросите новый',
-  android: 'Этот адрес привязан к аккаунту Google Play. Удалите аккаунт в игре: Настройки → «Документы» → «Удаление аккаунта и данных»',
+  android: 'Этот адрес привязан к аккаунту Google Play. Удалите аккаунт входом через Google выше или в игре: Настройки → «Документы» → «Удаление аккаунта и данных»',
   session: 'Вход истёк — войдите снова.',
   tooLate: 'Срок прошёл — аккаунт уже удаляется, отменить нельзя',
   often: 'Слишком часто, попробуйте через минуту',
@@ -310,12 +337,17 @@ var T = {
   unavailable: 'Сервис временно недоступен',
   failed: 'Не получилось',
   due: 'Аккаунт будет удалён {date}',
-  cancelled: 'Удаление отменено.'
+  cancelled: 'Удаление отменено.',
+  gLoading: 'Вход Google ещё загружается — нажмите через пару секунд.',
+  gRefused: 'Google не подтвердил вход. Попробуйте ещё раз.',
+  gExpired: 'Вход через Google истёк — войдите снова.',
+  gNone: 'Для этого профиля Google Play Игр на нашем сервере нет аккаунта игры — удалять здесь нечего. Если вы уверены, что он есть, напишите на mr.aksi.lc@gmail.com.'
 };
 </script>
 <script>
 // Сам ход одинаков на обеих страницах, тексты — в T выше. Спека 2026-10-27-account-deletion-verification, «Сайт»:
-// игрок без игры входит по коду из письма и просит удаление сессией самого аккаунта.
+// игрок без игры входит по коду из письма и просит удаление сессией самого аккаунта, а игрок Google Play Игр — входом
+// через Google (ниже).
 (function () {
   var Api = 'https://serial.mitrofanof.ru/account';
   // Версия согласия, которое даёт вход на этой странице (consent/index.html); игра шлёт ту же.
@@ -483,6 +515,102 @@ var T = {
         if (r.status === 200) { show('step-ask'); return say(T.cancelled, true); }
         if (r.status === 409 && r.body.error === 'due') return say(T.tooLate);
         say(common(r));
+      });
+    }
+  });
+
+  // Аккаунт Google Play Игр (спека, «Сайт: вход через Google»): окно Google даёт токен нашего OAuth-клиента на час, и
+  // сервер по нему узнаёт игрока — того же, что при входе в игре. Сессии нет: токен годится только на эти три действия и
+  // живёт, пока открыта вкладка.
+  var ClientId = '1017417160092-1n0vmtqeqgo7nlr99tst71bi1qtt6fr2.apps.googleusercontent.com';
+  var gRoot = document.getElementById('delete-google');
+  var gSteps = gRoot.querySelectorAll('.step');
+  var gMsg = gRoot.querySelector('.msg');
+  var googleToken = null;
+  var tokenClient = null;
+
+  function gShow(id) {
+    for (var i = 0; i < gSteps.length; i++) gSteps[i].hidden = gSteps[i].id !== id;
+  }
+  function gSay(text, ok) {
+    gMsg.textContent = text || '';
+    gMsg.hidden = !text;
+    gMsg.className = ok ? 'msg ok' : 'msg';
+  }
+  function gBusy(on) {
+    var buttons = gRoot.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) buttons[i].disabled = on;
+  }
+  // Назад к кнопке входа: токен истёк, не наш, или аккаунта на сервере нет.
+  function gBack(text) {
+    googleToken = null;
+    gShow('g-start');
+    gSay(text);
+  }
+  function gShowDue(iso) {
+    gRoot.querySelector('.due').textContent = T.due.replace('{date}', dateOf(iso));
+    gShow('g-due');
+  }
+
+  // Ответ сервера, или null, когда он уже вернул к кнопке входа.
+  function gCall(action) {
+    gBusy(true);
+    return post('site-deletion', { googleToken: googleToken, action: action }).then(function (r) {
+      gBusy(false);
+      if (r.status === 401) { gBack(T.gExpired); return null; }
+      if (r.status === 404 && r.body.error === 'account') { gBack(T.gNone); return null; }
+      return r;
+    });
+  }
+
+  function gStatus() {
+    gShow('g-wait');
+    gCall('status').then(function (r) {
+      if (!r) return;
+      if (r.status !== 200) return gBack(common(r));
+      if (r.body.dueAt) gShowDue(r.body.dueAt);
+      else gShow('g-ask');
+    });
+  }
+
+  // Окно Google открывается только из нажатия: requestAccessToken вызывается сразу, иначе его заблокирует браузер.
+  function gSignIn() {
+    if (!window.google || !google.accounts || !google.accounts.oauth2) return gSay(T.gLoading);
+    if (!tokenClient) {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: ClientId,
+        scope: 'https://www.googleapis.com/auth/games_lite',
+        callback: function (t) {
+          if (t.error || !t.access_token) return gSay(T.gRefused);
+          googleToken = t.access_token;
+          gSay('');
+          gStatus();
+        },
+        // Окно закрыл сам игрок — это не ошибка.
+        error_callback: function (e) { gSay(e && e.type === 'popup_closed' ? '' : T.gRefused); }
+      });
+    }
+    tokenClient.requestAccessToken();
+  }
+
+  gRoot.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-act]');
+    if (!button || button.disabled) return;
+    var act = button.dataset.act;
+    gSay('');
+    if (act === 'g-signin') gSignIn();
+    else if (act === 'g-delete') {
+      gCall('request').then(function (r) {
+        if (!r) return;
+        if (r.status === 200 && r.body.dueAt) return gShowDue(r.body.dueAt);
+        gSay(common(r));
+      });
+    } else if (act === 'g-cancel') {
+      gCall('cancel').then(function (r) {
+        if (!r) return;
+        if (r.status === 200) { gShow('g-ask'); return gSay(T.cancelled, true); }
+        if (r.status === 409 && r.body.error === 'due') return gSay(T.tooLate);
+        gSay(common(r));
       });
     }
   });
