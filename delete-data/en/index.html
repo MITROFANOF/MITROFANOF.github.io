@@ -221,6 +221,15 @@
   .btn.danger { background: linear-gradient(135deg, #ff8fa3, #ff5c7a); }
   .btn:disabled { opacity: 0.55; cursor: default; }
   .due { color: var(--text); font-weight: 600; font-size: 17px; }
+  .who { display: grid; gap: 12px; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid var(--border); }
+  .who dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  .who dt { color: var(--muted); }
+  .who dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+  .who p { margin: 0; }
+  @media (max-width: 480px) {
+    .who dl { grid-template-columns: 1fr; gap: 2px; }
+    .who dd + dt { margin-top: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -243,16 +252,16 @@
       <div class="actions"><button class="btn" type="button" data-act="g-signin">Sign in with Google</button></div>
     </div>
 
+    <div class="who" hidden></div>
+
     <div class="step" id="g-wait" hidden><p>Loading…</p></div>
 
     <div class="step" id="g-ask" hidden>
-      <p>You are signed in through Google Play Games.</p>
       <p><strong>7 days</strong> after the request, the game account, the copy of your progress on our server and its versions, the collection, gifts and promo codes, and the progress change check data will be deleted, and the car and its copy number will no longer be linked to you. Until then you can cancel the deletion here or in the game. After that, nothing deleted can be brought back.</p>
       <div class="actions"><button class="btn danger" type="button" data-act="g-delete">Delete in 7 days</button></div>
     </div>
 
     <div class="step" id="g-due" hidden>
-      <p>You are signed in through Google Play Games.</p>
       <p class="due"></p>
       <p>Until then the deletion can be cancelled. After that, nothing deleted can be brought back.</p>
       <div class="actions"><button class="btn ghost" type="button" data-act="g-cancel">Cancel deletion</button></div>
@@ -341,7 +350,16 @@ var T = {
   gLoading: 'Google sign-in is still loading — tap again in a couple of seconds.',
   gRefused: 'Google did not confirm the sign-in. Try again.',
   gExpired: 'The Google sign-in has expired — sign in again.',
-  gNone: 'There is no game account on our server for this Google Play Games profile — there is nothing to delete here. If you are sure there is one, email mr.aksi.lc@gmail.com.'
+  gNone: 'There is no game account on our server for this Google Play Games profile — there is nothing to delete here. If you are sure there is one, email mr.aksi.lc@gmail.com.',
+  gName: 'Play Games name',
+  gId: 'Support ID',
+  gEmail: 'Email',
+  gSaved: 'Last saved',
+  gProgress: 'Progress',
+  gProgressLine: 'spins: {spins} · {money} ₽ · plates: {plates}',
+  gNoSave: 'not on our server',
+  gNoSaveHint: 'Our server holds no progress for this account. If you play signed in with email, your progress is in the email account: you can delete it below.',
+  gEmailHint: 'Signing in with this email is deleted together with the account.'
 };
 </script>
 <script>
@@ -526,11 +544,45 @@ var T = {
   var gRoot = document.getElementById('delete-google');
   var gSteps = gRoot.querySelectorAll('.step');
   var gMsg = gRoot.querySelector('.msg');
+  var gWhoBox = gRoot.querySelector('.who');
   var googleToken = null;
   var tokenClient = null;
 
   function gShow(id) {
     for (var i = 0; i < gSteps.length; i++) gSteps[i].hidden = gSteps[i].id !== id;
+    // Чей это аккаунт — над вопросом и над датой.
+    gWhoBox.hidden = (id !== 'g-ask' && id !== 'g-due') || !gWhoBox.firstChild;
+  }
+  function gNum(n) { return Number(n).toLocaleString(T.locale); }
+  function gProgressLine(s) {
+    // Копия из сборки до сводки прогресса: только время.
+    if (!s || s.spins === undefined) return '';
+    return T.gProgressLine.replace('{spins}', gNum(s.spins)).replace('{money}', gNum(s.money))
+      .replace('{plates}', gNum(s.plates));
+  }
+  // Какой аккаунт нашёлся и что в нём: у игрока может быть и аккаунт Play Игр, и аккаунт по почте.
+  function gWho(a) {
+    gWhoBox.textContent = '';
+    if (!a) return;
+    var dl = document.createElement('dl');
+    var rows = [[T.gName, a.name], [T.gId, a.id], [T.gEmail, a.email],
+      [T.gSaved, a.save ? dateOf(a.save.at) : T.gNoSave], [T.gProgress, gProgressLine(a.save)]];
+    for (var i = 0; i < rows.length; i++) {
+      if (!rows[i][1]) continue;
+      var dt = document.createElement('dt');
+      dt.textContent = rows[i][0];
+      var dd = document.createElement('dd');
+      dd.textContent = rows[i][1];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    }
+    gWhoBox.appendChild(dl);
+    var hint = !a.save ? T.gNoSaveHint : a.email ? T.gEmailHint : '';
+    if (hint) {
+      var p = document.createElement('p');
+      p.textContent = hint;
+      gWhoBox.appendChild(p);
+    }
   }
   function gSay(text, ok) {
     gMsg.textContent = text || '';
@@ -568,6 +620,7 @@ var T = {
     gCall('status').then(function (r) {
       if (!r) return;
       if (r.status !== 200) return gBack(common(r));
+      gWho(r.body.account);
       if (r.body.dueAt) gShowDue(r.body.dueAt);
       else gShow('g-ask');
     });

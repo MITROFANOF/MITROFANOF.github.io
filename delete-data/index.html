@@ -221,6 +221,15 @@
   .btn.danger { background: linear-gradient(135deg, #ff8fa3, #ff5c7a); }
   .btn:disabled { opacity: 0.55; cursor: default; }
   .due { color: var(--text); font-weight: 600; font-size: 17px; }
+  .who { display: grid; gap: 12px; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid var(--border); }
+  .who dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  .who dt { color: var(--muted); }
+  .who dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+  .who p { margin: 0; }
+  @media (max-width: 480px) {
+    .who dl { grid-template-columns: 1fr; gap: 2px; }
+    .who dd + dt { margin-top: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -243,16 +252,16 @@
       <div class="actions"><button class="btn" type="button" data-act="g-signin">Войти через Google</button></div>
     </div>
 
+    <div class="who" hidden></div>
+
     <div class="step" id="g-wait" hidden><p>Загрузка…</p></div>
 
     <div class="step" id="g-ask" hidden>
-      <p>Вы вошли через Google Play Игры.</p>
       <p>Через <strong>7 дней</strong> после запроса удалятся аккаунт игры, копия прогресса на нашем сервере и её версии, коллекция, подарки и промокоды, данные проверки изменений прогресса, а машина и её номер экземпляра перестанут быть связаны с вами. До этого срока удаление можно отменить здесь же или в игре. После него вернуть удалённое нельзя.</p>
       <div class="actions"><button class="btn danger" type="button" data-act="g-delete">Удалить через 7 дней</button></div>
     </div>
 
     <div class="step" id="g-due" hidden>
-      <p>Вы вошли через Google Play Игры.</p>
       <p class="due"></p>
       <p>До этого срока удаление можно отменить. После него вернуть удалённое нельзя.</p>
       <div class="actions"><button class="btn ghost" type="button" data-act="g-cancel">Отменить удаление</button></div>
@@ -341,7 +350,16 @@ var T = {
   gLoading: 'Вход Google ещё загружается — нажмите через пару секунд.',
   gRefused: 'Google не подтвердил вход. Попробуйте ещё раз.',
   gExpired: 'Вход через Google истёк — войдите снова.',
-  gNone: 'Для этого профиля Google Play Игр на нашем сервере нет аккаунта игры — удалять здесь нечего. Если вы уверены, что он есть, напишите на mr.aksi.lc@gmail.com.'
+  gNone: 'Для этого профиля Google Play Игр на нашем сервере нет аккаунта игры — удалять здесь нечего. Если вы уверены, что он есть, напишите на mr.aksi.lc@gmail.com.',
+  gName: 'Имя в Play Играх',
+  gId: 'ID для поддержки',
+  gEmail: 'Почта',
+  gSaved: 'Последнее сохранение',
+  gProgress: 'Прогресс',
+  gProgressLine: 'прокрутов: {spins} · {money} ₽ · номеров: {plates}',
+  gNoSave: 'нет на нашем сервере',
+  gNoSaveHint: 'Прогресса этого аккаунта на нашем сервере нет. Если вы играете со входом по почте, ваш прогресс — в аккаунте по почте: его можно удалить ниже.',
+  gEmailHint: 'Вход по этой почте удалится вместе с аккаунтом.'
 };
 </script>
 <script>
@@ -526,11 +544,45 @@ var T = {
   var gRoot = document.getElementById('delete-google');
   var gSteps = gRoot.querySelectorAll('.step');
   var gMsg = gRoot.querySelector('.msg');
+  var gWhoBox = gRoot.querySelector('.who');
   var googleToken = null;
   var tokenClient = null;
 
   function gShow(id) {
     for (var i = 0; i < gSteps.length; i++) gSteps[i].hidden = gSteps[i].id !== id;
+    // Чей это аккаунт — над вопросом и над датой.
+    gWhoBox.hidden = (id !== 'g-ask' && id !== 'g-due') || !gWhoBox.firstChild;
+  }
+  function gNum(n) { return Number(n).toLocaleString(T.locale); }
+  function gProgressLine(s) {
+    // Копия из сборки до сводки прогресса: только время.
+    if (!s || s.spins === undefined) return '';
+    return T.gProgressLine.replace('{spins}', gNum(s.spins)).replace('{money}', gNum(s.money))
+      .replace('{plates}', gNum(s.plates));
+  }
+  // Какой аккаунт нашёлся и что в нём: у игрока может быть и аккаунт Play Игр, и аккаунт по почте.
+  function gWho(a) {
+    gWhoBox.textContent = '';
+    if (!a) return;
+    var dl = document.createElement('dl');
+    var rows = [[T.gName, a.name], [T.gId, a.id], [T.gEmail, a.email],
+      [T.gSaved, a.save ? dateOf(a.save.at) : T.gNoSave], [T.gProgress, gProgressLine(a.save)]];
+    for (var i = 0; i < rows.length; i++) {
+      if (!rows[i][1]) continue;
+      var dt = document.createElement('dt');
+      dt.textContent = rows[i][0];
+      var dd = document.createElement('dd');
+      dd.textContent = rows[i][1];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    }
+    gWhoBox.appendChild(dl);
+    var hint = !a.save ? T.gNoSaveHint : a.email ? T.gEmailHint : '';
+    if (hint) {
+      var p = document.createElement('p');
+      p.textContent = hint;
+      gWhoBox.appendChild(p);
+    }
   }
   function gSay(text, ok) {
     gMsg.textContent = text || '';
@@ -568,6 +620,7 @@ var T = {
     gCall('status').then(function (r) {
       if (!r) return;
       if (r.status !== 200) return gBack(common(r));
+      gWho(r.body.account);
       if (r.body.dueAt) gShowDue(r.body.dueAt);
       else gShow('g-ask');
     });
