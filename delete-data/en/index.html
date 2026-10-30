@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Вход через Google для аккаунта Google Play Игр (спека 2026-10-27-account-deletion-verification, «Сайт: вход через Google»). -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root {
     --bg: #0b0b10;
@@ -179,12 +181,14 @@
     border-radius: 12px;
     background: var(--surface);
   }
-  /* Форма запроса: письмо собирается, только когда в нём есть, по чему найти игрока */
-  .request { display: grid; gap: 20px; margin: 28px 0 0; }
+  /* Удаление по коду из письма: три шага в одном блоке, сессия живёт только в переменной страницы */
+  .flow { margin: 28px 0 0; padding: 20px 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+  .step { display: grid; gap: 16px; }
+  .step > p { margin: 0; }
   .field { display: grid; gap: 6px; }
   .field .label { color: var(--text); font-weight: 600; font-size: 15px; }
   .field .hint { color: var(--muted); font-size: 13px; line-height: 1.5; }
-  .request input[type="text"], .request input[type="email"] {
+  .flow input[type="text"], .flow input[type="email"] {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid var(--border);
@@ -194,11 +198,13 @@
     font: inherit;
     font-size: 16px;
   }
-  .request input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .request input::placeholder { color: var(--muted); }
+  .flow input.code { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; max-width: 220px; }
+  .flow input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .flow input::placeholder { color: var(--muted); letter-spacing: normal; font-weight: 400; }
   .check { display: flex; gap: 10px; align-items: flex-start; color: var(--body); font-size: 15px; line-height: 1.5; cursor: pointer; }
   .check input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
-  .error { margin: 0; color: #ff8fa3; font-size: 14px; }
+  .msg { margin: 16px 0 0; color: #ff8fa3; font-size: 14px; }
+  .msg.ok { color: #8ff0b4; }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; }
   .btn {
     padding: 12px 22px;
@@ -212,24 +218,17 @@
     cursor: pointer;
   }
   .btn.ghost { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
-  .sent {
-    margin-top: 24px;
-    padding: 18px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: var(--surface);
-  }
-  .sent p { margin-top: 0; }
-  .sent dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0 0 14px; }
-  .sent dt { color: var(--muted); font-size: 14px; }
-  .sent dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
-  .sent pre {
-    margin: 0 0 16px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    font: inherit;
-    font-size: 14px;
-    color: var(--body);
+  .btn.danger { background: linear-gradient(135deg, #ff8fa3, #ff5c7a); }
+  .btn:disabled { opacity: 0.55; cursor: default; }
+  .due { color: var(--text); font-weight: 600; font-size: 17px; }
+  .who { display: grid; gap: 12px; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid var(--border); }
+  .who dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  .who dt { color: var(--muted); }
+  .who dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+  .who p { margin: 0; }
+  @media (max-width: 480px) {
+    .who dl { grid-template-columns: 1fr; gap: 2px; }
+    .who dd + dt { margin-top: 8px; }
   }
 </style>
 </head>
@@ -242,125 +241,431 @@
 
   <p>A game account is created when you sign in by email (in the web version or by linking an email address in the app) and, in newer versions of the app, when you sign in to Google Play Games. The only data kept on our own server is the car serial number record, created if you won a car in an in-game event while signed in to Google Play Games or, in the web version, by email, a progress change check report, if the game marked your profile, and the game account with a copy of your progress, if you have one (see the <a href="/privacy/en/">privacy policy</a>). We remove their link to you on request. All other data is stored on your device or by Google and Yandex, and you can delete it yourself — see below.</p>
 
-  <h2>How to request deletion</h2>
-  <p class="note"><strong>The account deletion button in the game's settings deletes nothing by itself</strong> — it opens this page. If you just want to start the game over, its settings have “Reset progress”.</p>
-  <p>Fill in what you have: this is how we find you on our server. If you have none of these, our server holds no data about you — the rest you can delete yourself, see <a href="#self">below</a>.</p>
+  <h2>How to delete your account</h2>
+  <p class="note"><strong>If you have the game, delete the account in it:</strong> Settings → “Documents” → “Account and data deletion”. If in your version of the game this button opens this page, update the game. If you just want to start the game over, its settings have “Reset progress” — it deletes nothing on the server.</p>
+  <p>Without the game, you can delete the account here: sign in the same way you do in the game — that is how we know the account is yours.</p>
 
-  <form class="request" id="request" novalidate>
-    <label class="field">
-      <span class="label">Support ID</span>
-      <input type="text" name="supportId" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64">
-      <span class="hint">Android app: the game's settings → “Support ID” → “Copy”. The “Progress modified” window shows the same ID. Attach a screenshot of the settings showing this ID — that is how we know the account is yours.</span>
-    </label>
-    <label class="field">
-      <span class="label">Email you sign in to the game with</span>
-      <input type="email" name="email" autocomplete="email" maxlength="254">
-      <span class="hint">The web version, or an email address linked in the app. Send the email from this same address — that is how we know the account is yours.</span>
-    </label>
-    <label class="field">
-      <span class="label">Car copy number</span>
-      <input type="text" name="serial" inputmode="numeric" maxlength="10" placeholder="e.g. 17">
-      <span class="hint">Shown in the garage: “Copy #17”. Attach a screenshot of the garage.</span>
-    </label>
-    <label class="check"><input type="checkbox" name="sure"><span>I understand: the account and the progress on the server are deleted for good and cannot be brought back.</span></label>
-    <p class="error" role="alert" hidden></p>
-    <div class="actions"><button class="btn" type="submit">Compose the email</button></div>
-  </form>
+  <h3>Google Play Games account</h3>
+  <p>Sign in with Google using the account you play with. Google tells us only the identifier of your Google Play Games profile in this game.</p>
+  <section id="delete-google" class="flow">
+    <div class="step" id="g-start">
+      <div class="actions"><button class="btn" type="button" data-act="g-signin">Sign in with Google</button></div>
+    </div>
 
-  <div class="sent" id="sent" hidden>
-    <p>Your email app will open with the email ready — check it, attach the screenshot if you gave an ID or a car number, and send it. If it did not open, send the email yourself:</p>
-    <dl>
-      <dt>To</dt><dd>mr.aksi.lc@gmail.com</dd>
-      <dt>Subject</dt><dd>Data deletion — Number Generator</dd>
-    </dl>
-    <pre class="letter"></pre>
-    <div class="actions"><button class="btn ghost" type="button" data-copy="to">Copy address</button><button class="btn ghost" type="button" data-copy="letter">Copy text</button></div>
-  </div>
-  <noscript><p>Email mr.aksi.lc@gmail.com with the subject “Data deletion — Number Generator” and include your support ID, the email you sign in with, or your car's copy number.</p></noscript>
+    <div class="who" hidden></div>
 
-  <p>We delete the data within 30 days and reply to your email. An email without any of these cannot be linked to any player, and we delete nothing on it.</p>
+    <div class="step" id="g-wait" hidden><p>Loading…</p></div>
+
+    <div class="step" id="g-ask" hidden>
+      <p><strong>7 days</strong> after the request, the game account, the copy of your progress on our server and its versions, the collection, gifts and promo codes, and the progress change check data will be deleted, and the car and its copy number will no longer be linked to you. Until then you can cancel the deletion here or in the game. After that, nothing deleted can be brought back.</p>
+      <div class="actions"><button class="btn danger" type="button" data-act="g-delete">Delete in 7 days</button></div>
+    </div>
+
+    <div class="step" id="g-due" hidden>
+      <p class="due"></p>
+      <p>Until then the deletion can be cancelled. After that, nothing deleted can be brought back.</p>
+      <div class="actions"><button class="btn ghost" type="button" data-act="g-cancel">Cancel deletion</button></div>
+    </div>
+
+    <p class="msg" role="alert" hidden></p>
+    <noscript><p>Deleting on this page needs JavaScript. Without it, delete the account in the game: Settings → “Documents” → “Account and data deletion”.</p></noscript>
+  </section>
+
+  <h3>Email account</h3>
+  <p>We send a code to the address you sign in to the game with.</p>
+  <section id="delete" class="flow">
+    <form class="step" id="step-email" novalidate>
+      <label class="field">
+        <span class="label">Email you sign in to the game with</span>
+        <input type="email" name="email" autocomplete="email" maxlength="254" required>
+      </label>
+      <label class="check"><input type="checkbox" name="consent"><span>I consent to the processing of my email address on the terms of the <a href="/consent/en/">consent</a></span></label>
+      <div class="actions"><button class="btn" type="submit">Get a code</button></div>
+    </form>
+
+    <form class="step" id="step-code" novalidate hidden>
+      <p>The code was sent to <strong class="sent-to"></strong>. It looks like a car plate, for example A777AA. If there is no email, check the Spam folder.</p>
+      <label class="field">
+        <span class="label">Code from the email</span>
+        <input class="code" type="text" name="code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="A777AA">
+      </label>
+      <div class="actions"><button class="btn" type="submit">Sign in</button><button class="btn ghost" type="button" data-act="again">Another address</button></div>
+    </form>
+
+    <div class="step" id="step-wait" hidden><p>Loading…</p></div>
+
+    <div class="step" id="step-ask" hidden>
+      <p>You are signed in as <strong class="who"></strong>.</p>
+      <p><strong>7 days</strong> after the request, the game account, the copy of your progress on our server and its versions, the collection, gifts and promo codes, and the progress change check data will be deleted, and the car and its copy number will no longer be linked to you. Until then you can cancel the deletion here or in the game. After that, nothing deleted can be brought back.</p>
+      <div class="actions"><button class="btn danger" type="button" data-act="delete">Delete in 7 days</button></div>
+    </div>
+
+    <div class="step" id="step-due" hidden>
+      <p>You are signed in as <strong class="who"></strong>.</p>
+      <p class="due"></p>
+      <p>Until then the deletion can be cancelled. After that, nothing deleted can be brought back.</p>
+      <div class="actions"><button class="btn ghost" type="button" data-act="cancel">Cancel deletion</button></div>
+    </div>
+
+    <p class="msg" role="alert" hidden></p>
+    <noscript><p>Deleting on this page needs JavaScript. Without it, delete the account in the game: Settings → “Documents” → “Account and data deletion”.</p></noscript>
+  </section>
 
   <h2>What is deleted</h2>
-  <p>The record on our server holds <strong>your Google Play Games profile identifier, the event, the copy number, and when it was assigned</strong>. On request we <strong>delete the profile identifier</strong>, after which the record can no longer be linked to you.</p>
-  <p><strong>What is kept</strong> is an anonymous “event — number — time” line, so that no other player gets the same number. The car and its number stay in your game (they are in your save), but after a reinstall without cloud save the old number cannot be restored. Without a request, the record is kept for as long as the copy number exists.</p>
-  <p><strong>A progress change check report</strong> (profile identifier, marks, game version, platform, balance, currency, number of spins, record of a lifted mark) is deleted entirely. Without a request it is deleted automatically one year after the last report. If the mark is still on in your game, the game will send a report again the next time you sign in to Google Play Games.</p>
-  <p><strong>A game account</strong> — the email address, sign-in keys, the copy of your progress on the server, and progress set aside when accounts were merged are deleted entirely. If you only sign in through Google Play Games and have not linked an email address, include the support ID from the game's settings.</p>
+  <p><strong>The game account</strong> — the email address, sign-in keys, the copy of your progress on the server and its versions, progress set aside when accounts were merged, gifts, promo codes and the phone key information — is deleted entirely 7 days after the request. After deletion only a hash of the sign-in identifier (the email address or the Google Play Games profile) is kept, for 90 days, so that the game on your devices starts over and does not put the deleted progress back on the server; then it is deleted too.</p>
+  <p>The car serial number record on our server holds <strong>your gamer profile identifier, the event, the copy number, and when it was assigned</strong>. We <strong>delete the profile identifier</strong>, after which the record can no longer be linked to you. <strong>What is kept</strong> is an anonymous “event — number — time” line, so that no other player gets the same number. Without a request, the record is kept for as long as the copy number exists.</p>
+  <p><strong>A progress change check report</strong> (profile identifier, marks, game version, platform, balance, currency, number of spins, record of a lifted mark) is deleted entirely. Without a request it is deleted automatically one year after the last report.</p>
 
   <h2 id="self">Data you can delete yourself</h2>
   <ul>
     <li><strong>Game progress on your phone</strong> — uninstall the game or clear its data in Android settings.</li>
     <li><strong>Google Play Games cloud save, achievements and scores</strong> — stored by Google; delete them in your <a href="https://play.google.com/games/profile">Google Play Games profile</a>.</li>
     <li><strong>Advertising ID</strong> — reset or delete it in your device settings (Google → Ads). Yandex advertising and analytics data (Yandex Mobile Ads, AppMetrica) is not linked to an account and is kept under the <a href="https://yandex.com/legal/confidential/">Yandex Privacy Policy</a>.</li>
-    <li><strong>Web version</strong> (play.mitrofanof.ru) — progress lives in your browser (clear the site's data in your browser settings); if you signed in by email, it is also on our server, and we delete it at your request by email.</li>
+    <li><strong>Web version</strong> (play.mitrofanof.ru) — progress lives in your browser (clear the site's data in your browser settings); if you signed in by email, it is also on our server, and you can delete it <a href="#delete">above</a>.</li>
   </ul>
 
-  <p>More in the <a href="/privacy/en/">Privacy Policy</a>.</p>
+  <p>Questions — email <a href="mailto:mr.aksi.lc@gmail.com">mr.aksi.lc@gmail.com</a>. More in the <a href="/privacy/en/">Privacy Policy</a>.</p>
 
   <footer>© Mitrofan Games</footer>
 </main>
 <script>
-// С 3.4.0 ссылка в настройках игры ведёт сюда, и ссылка-письмо на этой странице приносила пустые письма: её нажимали
-// и сразу отправляли. Теперь письмо собирается, только когда в нём есть, по чему найти игрока.
+var T = {
+  lang: 'en',
+  locale: 'en-GB',
+  email: 'Check the email address.',
+  consent: 'Tick the consent to the processing of your email address — without it no code can be sent.',
+  codeFormat: 'The code looks like a car plate: a letter, three digits and two letters, for example A777AA.',
+  codeWrong: 'Wrong code, attempts left: {n}',
+  codeGone: 'The code has expired, request a new one',
+  android: 'This address is linked to a Google Play account. Delete the account by signing in with Google above, or in the game: Settings → “Documents” → “Account and data deletion”',
+  session: 'The sign-in has expired — sign in again.',
+  tooLate: 'The date has passed — the account is already being deleted and this can no longer be cancelled',
+  often: 'Too often, try again in a minute',
+  oftenIn: 'Too often, try again in {n} min',
+  offline: 'No connection',
+  unavailable: 'The service is temporarily unavailable',
+  failed: 'Something went wrong',
+  due: 'The account will be deleted on {date}',
+  cancelled: 'The deletion is cancelled.',
+  gLoading: 'Google sign-in is still loading — tap again in a couple of seconds.',
+  gRefused: 'Google did not confirm the sign-in. Try again.',
+  gExpired: 'The Google sign-in has expired — sign in again.',
+  gNone: 'There is no game account on our server for this Google Play Games profile — there is nothing to delete here. If you are sure there is one, email mr.aksi.lc@gmail.com.',
+  gName: 'Play Games name',
+  gId: 'Support ID',
+  gEmail: 'Email',
+  gSaved: 'Last saved',
+  gProgress: 'Progress',
+  gProgressLine: 'spins: {spins} · {money} ₽ · plates: {plates}',
+  gNoSave: 'not on our server',
+  gNoSaveHint: 'Our server holds no progress for this account. If you play signed in with email, your progress is in the email account: you can delete it below.',
+  gEmailHint: 'Signing in with this email is deleted together with the account.'
+};
+</script>
+<script>
+// Сам ход одинаков на обеих страницах, тексты — в T выше. Спека 2026-10-27-account-deletion-verification, «Сайт»:
+// игрок без игры входит по коду из письма и просит удаление сессией самого аккаунта, а игрок Google Play Игр — входом
+// через Google (ниже).
 (function () {
-  var To = 'mr.aksi.lc@gmail.com';
-  var Subject = 'Data deletion — Number Generator';
-  var Msg = {
-    none: 'Fill in at least one: the support ID, the email or the car number. If you have none of these, our server holds no data about you.',
-    id: 'This does not look like a support ID — copy it in the game\'s settings with “Copy”.',
-    email: 'Check the email address.',
-    serial: 'The copy number is the number from the garage, e.g. 17.',
-    sure: 'Tick the box to confirm you understand that deletion cannot be undone.'
-  };
-  var form = document.getElementById('request');
-  var f = form.elements;
-  var error = form.querySelector('.error');
-  var sent = document.getElementById('sent');
-  var letter = sent.querySelector('.letter');
+  var Api = 'https://serial.mitrofanof.ru/account';
+  // Версия согласия, которое даёт вход на этой странице (consent/index.html); игра шлёт ту же.
+  var ConsentVersion = '2026-10-27';
+  // Только здесь, не в localStorage и не в cookie: сессия живёт, пока открыта вкладка.
+  var token = null;
+  var email = '';
 
-  // «17», «№17», «#17», «No. 17» → «17».
-  function serialOf(text) {
-    var m = /^(?:№|#|no\.?)?\s*(\d{1,6})$/i.exec(text);
-    return m ? m[1] : null;
+  var root = document.getElementById('delete');
+  var steps = root.querySelectorAll('.step');
+  var msg = root.querySelector('.msg');
+  var emailForm = document.getElementById('step-email');
+  var codeForm = document.getElementById('step-code');
+
+  function show(id) {
+    for (var i = 0; i < steps.length; i++) steps[i].hidden = steps[i].id !== id;
+  }
+  function say(text, ok) {
+    msg.textContent = text || '';
+    msg.hidden = !text;
+    msg.className = ok ? 'msg ok' : 'msg';
+  }
+  function fill(cls, text) {
+    var els = root.querySelectorAll('.' + cls);
+    for (var i = 0; i < els.length; i++) els[i].textContent = text;
+  }
+  function busy(on) {
+    var buttons = root.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) buttons[i].disabled = on;
+  }
+  function nonce() {
+    var bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    var hex = '';
+    for (var i = 0; i < bytes.length; i++) hex += (bytes[i] < 16 ? '0' : '') + bytes[i].toString(16);
+    return hex;
   }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var id = f.supportId.value.trim();
-    var email = f.email.value.trim();
-    var serialText = f.serial.value.trim();
-    var serial = serialOf(serialText);
-    var problem =
-      !id && !email && !serialText ? Msg.none :
-      id && !/^[A-Za-z0-9_-]{6,64}$/.test(id) ? Msg.id :
-      email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? Msg.email :
-      serialText && !serial ? Msg.serial :
-      !f.sure.checked ? Msg.sure : '';
-    error.textContent = problem;
-    error.hidden = !problem;
-    if (problem) { sent.hidden = true; return; }
+  // text/plain, как у самой игры: простой запрос, без preflight. Отвечает {status, body}; сбой сети — status 0.
+  function post(op, body) {
+    return fetch(Api + '?op=' + op, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(body),
+      credentials: 'omit',
+      cache: 'no-store'
+    }).then(function (r) {
+      return r.text().then(function (text) {
+        var data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+        return { status: r.status, body: data || {} };
+      });
+    }, function () { return { status: 0, body: {} }; });
+  }
 
-    var lines = ['Please delete my data in the game Number Generator.', ''];
-    if (id) lines.push('Support ID: ' + id + ' (screenshot of the settings attached)');
-    if (email) lines.push('Email in the game: ' + email);
-    if (serial) lines.push('Car copy number: #' + serial + ' (screenshot of the garage attached)');
-    lines.push('', 'I understand that the account and the progress on the server are deleted for good.');
-    var body = lines.join('\n');
-    letter.textContent = body;
-    sent.hidden = false;
-    sent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    location.href = 'mailto:' + To + '?subject=' + encodeURIComponent(Subject)
-      + '&body=' + encodeURIComponent(body.replace(/\n/g, '\r\n'));
+  function common(r) {
+    if (r.status === 0) return T.offline;
+    if (r.status === 429) {
+      var wait = Number(r.body.retryAfter);
+      return wait > 60 ? T.oftenIn.replace('{n}', Math.ceil(wait / 60)) : T.often;
+    }
+    if (r.status === 503) return T.unavailable;
+    return T.failed;
+  }
+
+  // Сессию сервер больше не принимает: назад к адресу, введённое остаётся.
+  function signedOut(r) {
+    token = null;
+    show('step-email');
+    say(r.body.error === 'android' ? T.android : T.session);
+  }
+
+  function dateOf(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString(T.locale, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function showDue(iso) {
+    fill('due', T.due.replace('{date}', dateOf(iso)));
+    show('step-due');
+  }
+
+  function loadAccount() {
+    show('step-wait');
+    busy(true);
+    post('orders', { token: token, nonce: nonce(), can: [] }).then(function (r) {
+      busy(false);
+      if (r.status === 401) return signedOut(r);
+      if (r.status !== 200) { show('step-email'); token = null; return say(common(r)); }
+      if (typeof r.body.deletion === 'string' && r.body.deletion) showDue(r.body.deletion);
+      else show('step-ask');
+    });
+  }
+
+  emailForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var typed = emailForm.elements.email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(typed)) return say(T.email);
+    if (!emailForm.elements.consent.checked) return say(T.consent);
+    say('');
+    busy(true);
+    post('code', { email: typed, lang: T.lang }).then(function (r) {
+      busy(false);
+      if (r.status === 200) {
+        email = typed;
+        fill('sent-to', email);
+        codeForm.elements.code.value = '';
+        show('step-code');
+        codeForm.elements.code.focus();
+        return;
+      }
+      say(r.status === 400 ? T.email : common(r));
+    });
   });
 
-  sent.addEventListener('click', function (e) {
-    var button = e.target.closest('[data-copy]');
-    if (!button || button.disabled || !navigator.clipboard) return;
-    var label = button.textContent;
-    navigator.clipboard.writeText(button.dataset.copy === 'to' ? To : letter.textContent).then(function () {
-      button.disabled = true;
-      button.textContent = 'Copied';
-      setTimeout(function () { button.textContent = label; button.disabled = false; }, 1500);
-    }, function () {});
+  codeForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var code = codeForm.elements.code.value.replace(/[\s-]/g, '').toUpperCase();
+    // Латиница или кириллица — всё равно: сервер сам сводит буквы номера.
+    if (!/^[A-ZА-ЯЁ]\d{3}[A-ZА-ЯЁ]{2}$/.test(code)) return say(T.codeFormat);
+    say('');
+    busy(true);
+    post('verify', { email: email, code: code, consentVersion: ConsentVersion }).then(function (r) {
+      busy(false);
+      if (r.status === 200 && typeof r.body.token === 'string') {
+        token = r.body.token;
+        fill('who', r.body.email || email);
+        return loadAccount();
+      }
+      if (r.status === 409 && r.body.error === 'android') return say(T.android);
+      if (r.status === 400 && r.body.error === 'code') return say(T.codeWrong.replace('{n}', r.body.attemptsLeft));
+      if (r.status === 400) return say(T.codeFormat);
+      if (r.status === 410) return say(T.codeGone);
+      say(common(r));
+    });
+  });
+
+  root.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-act]');
+    if (!button || button.disabled) return;
+    var act = button.dataset.act;
+    if (act === 'again') {
+      token = null;
+      say('');
+      show('step-email');
+      emailForm.elements.email.focus();
+    } else if (act === 'delete') {
+      say('');
+      busy(true);
+      post('delete-request', { token: token, site: true }).then(function (r) {
+        busy(false);
+        if (r.status === 401) return signedOut(r);
+        if (r.status === 200 && r.body.dueAt) return showDue(r.body.dueAt);
+        // Аккаунту Google Play нужен свежий код Play Games его игрока, а он есть только у игры.
+        if (r.status === 400 && r.body.error === 'play') return say(T.android);
+        say(common(r));
+      });
+    } else if (act === 'cancel') {
+      say('');
+      busy(true);
+      post('delete-cancel', { token: token }).then(function (r) {
+        busy(false);
+        if (r.status === 401) return signedOut(r);
+        if (r.status === 200) { show('step-ask'); return say(T.cancelled, true); }
+        if (r.status === 409 && r.body.error === 'due') return say(T.tooLate);
+        say(common(r));
+      });
+    }
+  });
+
+  // Аккаунт Google Play Игр (спека, «Сайт: вход через Google»): окно Google даёт токен нашего OAuth-клиента на час, и
+  // сервер по нему узнаёт игрока — того же, что при входе в игре. Сессии нет: токен годится только на эти три действия и
+  // живёт, пока открыта вкладка.
+  var ClientId = '1017417160092-1n0vmtqeqgo7nlr99tst71bi1qtt6fr2.apps.googleusercontent.com';
+  var gRoot = document.getElementById('delete-google');
+  var gSteps = gRoot.querySelectorAll('.step');
+  var gMsg = gRoot.querySelector('.msg');
+  var gWhoBox = gRoot.querySelector('.who');
+  var googleToken = null;
+  var tokenClient = null;
+
+  function gShow(id) {
+    for (var i = 0; i < gSteps.length; i++) gSteps[i].hidden = gSteps[i].id !== id;
+    // Чей это аккаунт — над вопросом и над датой.
+    gWhoBox.hidden = (id !== 'g-ask' && id !== 'g-due') || !gWhoBox.firstChild;
+  }
+  function gNum(n) { return Number(n).toLocaleString(T.locale); }
+  function gProgressLine(s) {
+    // Копия из сборки до сводки прогресса: только время.
+    if (!s || s.spins === undefined) return '';
+    return T.gProgressLine.replace('{spins}', gNum(s.spins)).replace('{money}', gNum(s.money))
+      .replace('{plates}', gNum(s.plates));
+  }
+  // Какой аккаунт нашёлся и что в нём: у игрока может быть и аккаунт Play Игр, и аккаунт по почте.
+  function gWho(a) {
+    gWhoBox.textContent = '';
+    if (!a) return;
+    var dl = document.createElement('dl');
+    var rows = [[T.gName, a.name], [T.gId, a.id], [T.gEmail, a.email],
+      [T.gSaved, a.save ? dateOf(a.save.at) : T.gNoSave], [T.gProgress, gProgressLine(a.save)]];
+    for (var i = 0; i < rows.length; i++) {
+      if (!rows[i][1]) continue;
+      var dt = document.createElement('dt');
+      dt.textContent = rows[i][0];
+      var dd = document.createElement('dd');
+      dd.textContent = rows[i][1];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    }
+    gWhoBox.appendChild(dl);
+    var hint = !a.save ? T.gNoSaveHint : a.email ? T.gEmailHint : '';
+    if (hint) {
+      var p = document.createElement('p');
+      p.textContent = hint;
+      gWhoBox.appendChild(p);
+    }
+  }
+  function gSay(text, ok) {
+    gMsg.textContent = text || '';
+    gMsg.hidden = !text;
+    gMsg.className = ok ? 'msg ok' : 'msg';
+  }
+  function gBusy(on) {
+    var buttons = gRoot.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) buttons[i].disabled = on;
+  }
+  // Назад к кнопке входа: токен истёк, не наш, или аккаунта на сервере нет.
+  function gBack(text) {
+    googleToken = null;
+    gShow('g-start');
+    gSay(text);
+  }
+  function gShowDue(iso) {
+    gRoot.querySelector('.due').textContent = T.due.replace('{date}', dateOf(iso));
+    gShow('g-due');
+  }
+
+  // Ответ сервера, или null, когда он уже вернул к кнопке входа.
+  function gCall(action) {
+    gBusy(true);
+    return post('site-deletion', { googleToken: googleToken, action: action }).then(function (r) {
+      gBusy(false);
+      if (r.status === 401) { gBack(T.gExpired); return null; }
+      if (r.status === 404 && r.body.error === 'account') { gBack(T.gNone); return null; }
+      return r;
+    });
+  }
+
+  function gStatus() {
+    gShow('g-wait');
+    gCall('status').then(function (r) {
+      if (!r) return;
+      if (r.status !== 200) return gBack(common(r));
+      gWho(r.body.account);
+      if (r.body.dueAt) gShowDue(r.body.dueAt);
+      else gShow('g-ask');
+    });
+  }
+
+  // Окно Google открывается только из нажатия: requestAccessToken вызывается сразу, иначе его заблокирует браузер.
+  function gSignIn() {
+    if (!window.google || !google.accounts || !google.accounts.oauth2) return gSay(T.gLoading);
+    if (!tokenClient) {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: ClientId,
+        scope: 'https://www.googleapis.com/auth/games_lite',
+        callback: function (t) {
+          if (t.error || !t.access_token) return gSay(T.gRefused);
+          googleToken = t.access_token;
+          gSay('');
+          gStatus();
+        },
+        // Окно закрыл сам игрок — это не ошибка.
+        error_callback: function (e) { gSay(e && e.type === 'popup_closed' ? '' : T.gRefused); }
+      });
+    }
+    tokenClient.requestAccessToken();
+  }
+
+  gRoot.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-act]');
+    if (!button || button.disabled) return;
+    var act = button.dataset.act;
+    gSay('');
+    if (act === 'g-signin') gSignIn();
+    else if (act === 'g-delete') {
+      gCall('request').then(function (r) {
+        if (!r) return;
+        if (r.status === 200 && r.body.dueAt) return gShowDue(r.body.dueAt);
+        gSay(common(r));
+      });
+    } else if (act === 'g-cancel') {
+      gCall('cancel').then(function (r) {
+        if (!r) return;
+        if (r.status === 200) { gShow('g-ask'); return gSay(T.cancelled, true); }
+        if (r.status === 409 && r.body.error === 'due') return gSay(T.tooLate);
+        gSay(common(r));
+      });
+    }
   });
 })();
 </script>
